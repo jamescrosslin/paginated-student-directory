@@ -22,7 +22,7 @@ FSJS Project 2 - Data Pagination and Filtering
 // },
 
 const linkList = document.querySelector(".link-list");
-
+const studentList = document.querySelector(".student-list");
 /*
 Create the `showPage` function
 This function will create and insert/append the elements needed to display a "page" of nine students
@@ -47,47 +47,59 @@ function makeElement(elementTag, attributes) {
 function buildCard(list) {}
 
 function showPage(list, page) {
-  const numOfItems = list.length < 9 ? list.length : 9;
-  const startIndex = page * numOfItems - numOfItems;
-  const endIndex = page * numOfItems;
-  const studentList = document.querySelector(".student-list");
+  const itemsPerPage = list.length < 9 ? list.length : 9;
+  const startIndex = page * itemsPerPage - itemsPerPage;
+  const endIndex = page * itemsPerPage;
 
   studentList.innerHTML = "";
 
   list.forEach((student, i) => {
     if (startIndex <= i && i < endIndex) {
-      const li = makeElement("li", { "className": "student-item cf" });
-      const studentDeets = makeElement("div", {
-        "className": "student-details",
-      });
-      li.appendChild(studentDeets);
-      studentDeets.appendChild(
-        makeElement("img", {
-          "className": "avatar",
-          "src": student.picture.thumbnail,
-          "alt": "Profile Picture",
-        })
-      );
-      studentDeets.appendChild(
-        makeElement("h3", {
-          "textContent": student.name.first + " " + student.name.last,
-        })
-      );
-      studentDeets.appendChild(
-        makeElement("span", {
-          "className": "email",
-          "textContent": student.email,
-        })
-      );
-      const joinedDeets = makeElement("div", { "className": "joined-details" });
-      li.appendChild(joinedDeets);
-      joinedDeets.appendChild(
-        makeElement("span", {
-          "className": "date",
-          "textContent": student.registered.date,
-        })
-      );
-      studentList.appendChild(li);
+      // const li = makeElement("li", { "className": "student-item cf" });
+      // const studentDeets = makeElement("div", {
+      //   "className": "student-details",
+      // });
+      // li.appendChild(studentDeets);
+      // studentDeets.appendChild(
+      //   makeElement("img", {
+      //     "className": "avatar",
+      //     "src": student.picture.thumbnail,
+      //     "alt": "Profile Picture",
+      //   })
+      // );
+      // studentDeets.appendChild(
+      //   makeElement("h3", {
+      //     "textContent": student.name.first + " " + student.name.last,
+      //   })
+      // );
+      // studentDeets.appendChild(
+      //   makeElement("span", {
+      //     "className": "email",
+      //     "textContent": student.email,
+      //   })
+      // );
+      // const joinedDeets = makeElement("div", { "className": "joined-details"});
+      // li.appendChild(joinedDeets);
+      // joinedDeets.appendChild(
+      //   makeElement("span", {
+      //     "className": "date",
+      //     "textContent": student.registered.date,
+      //   })
+      // );
+
+      const studentCard = `
+        <li class="student-item cf">
+        <div class="student-details">
+          <img class="avatar" src="${student.picture.large}" alt="Profile Picture">
+          <h3>${student.name.first} ${student.name.last}</h3>
+          <span class="email">${student.email}</span>
+        </div>
+        <div class="joined-details">
+          <span class="date">Joined ${student.registered.date}</span>
+        </div>
+        </li>
+      `;
+      studentList.insertAdjacentHTML("beforeend", studentCard);
     }
   });
 }
@@ -96,6 +108,35 @@ function showPage(list, page) {
 Create the `addPagination` function
 This function will create and insert/append the elements needed for the pagination buttons
 */
+function addPagination(list) {
+  const itemsPerPage = list.length < 9 ? list.length : 9;
+  linkList.innerHTML = "";
+
+  let i = 0;
+  do {
+    const button = `
+      <li>
+        <button type="button">${i + 1}</button>
+      </li>
+    `;
+    linkList.insertAdjacentHTML("beforeend", button);
+    i++;
+  } while (i <= list.length / itemsPerPage);
+  linkList.firstElementChild.firstElementChild.className = "active";
+}
+
+linkList.addEventListener("click", (e) => {
+  const button = e.target;
+  if (button.tagName === "BUTTON") {
+    document
+      .querySelectorAll("li button")
+      .forEach((button) => (button.className = ""));
+    button.className = "active";
+
+    showPage(data, +button.textContent);
+  }
+});
 
 // Call functions
 showPage(data, 1);
+addPagination(data);

@@ -23,28 +23,23 @@ FSJS Project 2 - Data Pagination and Filtering
 
 const linkList = document.querySelector(".link-list");
 const studentList = document.querySelector(".student-list");
+const header = document.querySelector("header");
+const search = document.getElementById("search");
+
+function addSearch() {
+  const searchBar = `
+  <label for="search" class="student-search">
+    <input id="search" placeholder="Search by name...">
+    <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+  </label>
+  `;
+  header.insertAdjacentHTML("beforeend", searchBar);
+}
+
 /*
 Create the `showPage` function
 This function will create and insert/append the elements needed to display a "page" of nine students
 */
-
-/**
- * @function makeElement
- * @description Creates an element along with attributes
- * @param {String} elementTag The element type you want to create
- * @param {Object=} attributes Attributes and their values are passed in as property/value pairs
- * @returns {Element} The created element
- */
-function makeElement(elementTag, attributes) {
-  const element = document.createElement(elementTag);
-  if (attributes)
-    for (let attribute in attributes) {
-      element[attribute] = attributes[attribute] || "";
-    }
-  return element;
-}
-
-function buildCard(list) {}
 
 function showPage(list, page) {
   const itemsPerPage = list.length < 9 ? list.length : 9;
@@ -55,38 +50,6 @@ function showPage(list, page) {
 
   list.forEach((student, i) => {
     if (startIndex <= i && i < endIndex) {
-      // const li = makeElement("li", { "className": "student-item cf" });
-      // const studentDeets = makeElement("div", {
-      //   "className": "student-details",
-      // });
-      // li.appendChild(studentDeets);
-      // studentDeets.appendChild(
-      //   makeElement("img", {
-      //     "className": "avatar",
-      //     "src": student.picture.thumbnail,
-      //     "alt": "Profile Picture",
-      //   })
-      // );
-      // studentDeets.appendChild(
-      //   makeElement("h3", {
-      //     "textContent": student.name.first + " " + student.name.last,
-      //   })
-      // );
-      // studentDeets.appendChild(
-      //   makeElement("span", {
-      //     "className": "email",
-      //     "textContent": student.email,
-      //   })
-      // );
-      // const joinedDeets = makeElement("div", { "className": "joined-details"});
-      // li.appendChild(joinedDeets);
-      // joinedDeets.appendChild(
-      //   makeElement("span", {
-      //     "className": "date",
-      //     "textContent": student.registered.date,
-      //   })
-      // );
-
       const studentCard = `
         <li class="student-item cf">
         <div class="student-details">
@@ -121,7 +84,7 @@ function addPagination(list) {
     `;
     linkList.insertAdjacentHTML("beforeend", button);
     i++;
-  } while (i <= list.length / itemsPerPage);
+  } while (i < list.length / itemsPerPage);
   linkList.firstElementChild.firstElementChild.className = "active";
 }
 
@@ -137,6 +100,19 @@ linkList.addEventListener("click", (e) => {
   }
 });
 
+header.addEventListener("keyup", (e) => {
+  const searchText = document.getElementById("search").value;
+  const list = data.filter(
+    (student) =>
+      student.name.first.includes(searchText) ||
+      student.name.last.includes(searchText)
+  );
+  showPage(list, 1);
+  addPagination(list);
+  // if(e.code === "Backspace" && input.value === '')
+});
+
 // Call functions
+addSearch();
 showPage(data, 1);
 addPagination(data);

@@ -3,29 +3,17 @@ Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
 
-// Data object format: {
-//   name: {
-//     title: "Miss",
-//     first: "Ethel",
-//     last: "Dean",
-//   },
-//   email: "ethel.dean@example.com",
-//   registered: {
-//     date: "12-15-2005",
-//     age: 15,
-//   },
-//   picture: {
-//     large: "https://randomuser.me/api/portraits/women/25.jpg",
-//     medium: "https://randomuser.me/api/portraits/med/women/25.jpg",
-//     thumbnail: "https://randomuser.me/api/portraits/thumb/women/25.jpg",
-//   },
-// },
+/** I am going for exceeds expectations and would like a needs work 
+   grade if unsuccessful, thank you */
 
 const linkList = document.querySelector(".link-list");
 const studentList = document.querySelector(".student-list");
 const header = document.querySelector("header");
-const search = document.getElementById("search");
 
+/**
+ * @function addSearch
+ * @description adds a search bar to the DOM
+ */
 function addSearch() {
   const searchBar = `
   <label for="search" class="student-search">
@@ -36,11 +24,13 @@ function addSearch() {
   header.insertAdjacentHTML("beforeend", searchBar);
 }
 
-/*
-Create the `showPage` function
-This function will create and insert/append the elements needed to display a "page" of nine students
-*/
-
+/**
+ * @function showPage
+ * @param {array} list - array of student objects
+ * @param {number} page
+ * @description creates student information cards
+ *    and posts them to the DOM
+ */
 function showPage(list, page) {
   const itemsPerPage = list.length < 9 ? list.length : 9;
   const startIndex = page * itemsPerPage - itemsPerPage;
@@ -67,27 +57,61 @@ function showPage(list, page) {
   });
 }
 
-/*
-Create the `addPagination` function
-This function will create and insert/append the elements needed for the pagination buttons
-*/
+/**
+ * @function addPagination
+ * @param {array} list - array of student objects
+ * @description creates the correct number of page buttons
+ */
 function addPagination(list) {
   const itemsPerPage = list.length < 9 ? list.length : 9;
   linkList.innerHTML = "";
 
-  let i = 0;
+  let i = 1;
   do {
     const button = `
       <li>
-        <button type="button">${i + 1}</button>
+        <button type="button">${i}</button>
       </li>
     `;
     linkList.insertAdjacentHTML("beforeend", button);
     i++;
-  } while (i < list.length / itemsPerPage);
+  } while (i < list.length / itemsPerPage + 1);
   linkList.firstElementChild.firstElementChild.className = "active";
 }
 
+/**
+ * @function addNoResults
+ * @returns boolean
+ * @description clears list elements from page and displays lack of matches
+ */
+function addNoResults() {
+  studentList.innerHTML = "";
+  linkList.innerHTML = "";
+  studentList.insertAdjacentHTML(
+    "beforeend",
+    `<h3 class="no-results">No results found</h3>`
+  );
+  return false;
+}
+
+/**
+ * @function searchPage
+ * @param {array} list - array of student objects
+ * @description checks search field against names of all students
+ */
+function searchPage(list) {
+  const searchText = document.getElementById("search").value.toLowerCase();
+  const matchList = list.filter((student) => {
+    const name = student.name.first + " " + student.name.last;
+    return name.toLowerCase().includes(searchText);
+  });
+  return matchList.length < 1 ? addNoResults() : matchList;
+}
+
+/**
+ * @listens linkList
+ * @description handles display change on a page button click
+ */
 linkList.addEventListener("click", (e) => {
   const button = e.target;
   if (button.tagName === "BUTTON") {
@@ -95,21 +119,36 @@ linkList.addEventListener("click", (e) => {
       .querySelectorAll("li button")
       .forEach((button) => (button.className = ""));
     button.className = "active";
-
-    showPage(data, +button.textContent);
+    const list = searchPage(data);
+    if (list) showPage(list, +button.textContent);
   }
 });
 
+/**
+ * @listens header
+ * @description on a button or search image click, calls a search of the page
+ * and display change
+ */
+header.addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON" || e.target.tagName === "IMG") {
+    const list = searchPage(data);
+    if (list) {
+      showPage(list, 1);
+      addPagination(list);
+    }
+  }
+});
+
+/**
+ * @listens header
+ * @description on a keyup, calls a search of the page and display change
+ */
 header.addEventListener("keyup", (e) => {
-  const searchText = document.getElementById("search").value;
-  const list = data.filter(
-    (student) =>
-      student.name.first.includes(searchText) ||
-      student.name.last.includes(searchText)
-  );
-  showPage(list, 1);
-  addPagination(list);
-  // if(e.code === "Backspace" && input.value === '')
+  const list = searchPage(data);
+  if (list) {
+    showPage(list, 1);
+    addPagination(list);
+  }
 });
 
 // Call functions

@@ -81,7 +81,7 @@ function addPagination(list) {
 
 /**
  * @function addNoResults
- * @returns boolean
+ * @returns {boolean} always returns false
  * @description clears list elements from page and displays lack of matches
  */
 function addNoResults() {

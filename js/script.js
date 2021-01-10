@@ -1,11 +1,3 @@
-/*
-Treehouse Techdegree:
-FSJS Project 2 - Data Pagination and Filtering
-*/
-
-/** I am going for exceeds expectations and would like a needs work 
-   grade if unsuccessful, thank you */
-
 const linkList = document.querySelector(".link-list");
 const studentList = document.querySelector(".student-list");
 const header = document.querySelector("header");
@@ -105,7 +97,8 @@ function searchPage(list) {
     const name = student.name.first + " " + student.name.last;
     return name.toLowerCase().includes(searchText);
   });
-  return matchList.length < 1 ? addNoResults() : matchList;
+  console.log(matchList.length);
+  return matchList.length ? matchList : addNoResults();
 }
 
 /**
@@ -151,7 +144,6 @@ header.addEventListener("keyup", (e) => {
   }
 });
 
-// Call functions
 addSearch();
 showPage(data, 1);
 addPagination(data);

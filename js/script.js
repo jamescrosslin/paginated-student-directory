@@ -24,9 +24,9 @@ function addSearch() {
  *    and posts them to the DOM
  */
 function showPage(list, page) {
-  let startIndex = page * 9 - 9;
-  let endIndex = page * 9;
-  let ul = document.querySelector(".student-list");
+  const startIndex = page * 9 - 9;
+  const endIndex = page * 9;
+  const ul = document.querySelector(".student-list");
   ul.innerHTML = "";
   for (let i = 0; i < list.length; i++) {
     if (i >= startIndex && i < endIndex) {

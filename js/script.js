@@ -24,29 +24,27 @@ function addSearch() {
  *    and posts them to the DOM
  */
 function showPage(list, page) {
-  const itemsPerPage = list.length < 9 ? list.length : 9;
-  const startIndex = page * itemsPerPage - itemsPerPage;
-  const endIndex = page * itemsPerPage;
-
-  studentList.innerHTML = "";
-
-  list.forEach((student, i) => {
-    if (startIndex <= i && i < endIndex) {
-      const studentCard = `
-        <li class="student-item cf">
+  let startIndex = page * 9 - 9;
+  let endIndex = page * 9;
+  let ul = document.querySelector(".student-list");
+  ul.innerHTML = "";
+  for (let i = 0; i < list.length; i++) {
+    if (i >= startIndex && i < endIndex) {
+      ul.insertAdjacentHTML(
+        "beforeend",
+        `<li class="student-item cf">
         <div class="student-details">
-          <img class="avatar" src="${student.picture.large}" alt="Profile Picture">
-          <h3>${student.name.first} ${student.name.last}</h3>
-          <span class="email">${student.email}</span>
+          <img class="avatar" src="${list[i].picture.medium}" alt="Profile Picture">
+          <h3>${list[i].name.first} ${list[i].name.last}</h3>
+          <span class="email">${list[i].email}</span>
         </div>
         <div class="joined-details">
-          <span class="date">Joined ${student.registered.date}</span>
+          <span class="date">Joined ${list[i].registered.date}</span>
         </div>
-        </li>
-      `;
-      studentList.insertAdjacentHTML("beforeend", studentCard);
+      </li>`
+      );
     }
-  });
+  }
 }
 
 /**
@@ -55,7 +53,6 @@ function showPage(list, page) {
  * @description creates the correct number of page buttons
  */
 function addPagination(list) {
-  const itemsPerPage = list.length < 9 ? list.length : 9;
   linkList.innerHTML = "";
 
   let i = 1;
@@ -67,7 +64,7 @@ function addPagination(list) {
     `;
     linkList.insertAdjacentHTML("beforeend", button);
     i++;
-  } while (i < list.length / itemsPerPage + 1);
+  } while (i <= Math.ceil(list.length / 9));
   linkList.firstElementChild.firstElementChild.className = "active";
 }
 
@@ -97,7 +94,6 @@ function searchPage(list) {
     const name = student.name.first + " " + student.name.last;
     return name.toLowerCase().includes(searchText);
   });
-  console.log(matchList.length);
   return matchList.length ? matchList : addNoResults();
 }
 
